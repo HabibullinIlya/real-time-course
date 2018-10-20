@@ -197,6 +197,10 @@ TIM2_IRQHandler    PROC
 ; Reset handler
 Reset_Handler    PROC
                  EXPORT  Reset_Handler             [WEAK]
+				 
+				 IMPORT SystemInit
+				 IMPORT main
+				 
                  BL SystemInit
 				 BL main
 	 
@@ -419,113 +423,113 @@ FPU_IRQHandler
 
                 ENDP
 					
-main PROC
+;main PROC
 		
 				 
-blink_loopstart
-				;toggle diod	
-				;LDR R1,= 0x40020C00 	;base address was set in previous step
-				 CPSID I
-                  LDR R2,[R1,#0x14]		;read register [0x40020C14] in R2
-				 LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
-				 EORS R2,R0				;modify R2
+;blink_loopstart
+				;;toggle diod	
+				;;LDR R1,= 0x40020C00 	;base address was set in previous step
+				 ;CPSID I
+                  ;LDR R2,[R1,#0x14]		;read register [0x40020C14] in R2
+				 ;LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
+				 ;EORS R2,R0				;modify R2
 
-				 LDR R3,= 600000
-wait
-				 SUBS R3, #1
-				 CMP R3,#0
-				 BNE wait
-                 STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
-                 CPSIE I
+				 ;LDR R3,= 600000
+;wait
+				 ;SUBS R3, #1
+				 ;CMP R3,#0
+				 ;BNE wait
+                 ;STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
+                 ;CPSIE I
 
-blink_waitsetup
-				 LDR R3,= 2000000
-blink_waiting
-				 SUBS R3,#1
-				 CMP R3,#0
-				 BNE blink_waiting
+;blink_waitsetup
+				 ;LDR R3,= 2000000
+;blink_waiting
+				 ;SUBS R3,#1
+				 ;CMP R3,#0
+				 ;BNE blink_waiting
 				 
-blink_loopend
-				 B blink_loopstart
+;blink_loopend
+				 ;B blink_loopstart
 
-	 ENDP
-SystemInit PROC
+	 ;ENDP
+;SystemInit PROC
 	
-;;____________ WORK WITH TIM2 __________________
-;timer_setup
+;;;____________ WORK WITH TIM2 __________________
+;;timer_setup
 				
-				LDR R1,= 0x40023800
-				LDR R2,[R1,#0x40]
-				LDR R0,= 0x00000001
-				ORRS R2,R0
-				STR R2,[R1,#0x40]
+				;LDR R1,= 0x40023800
+				;LDR R2,[R1,#0x40]
+				;LDR R0,= 0x00000001
+				;ORRS R2,R0
+				;STR R2,[R1,#0x40]
 				
-				;set a base address of TIM2 module(from Memory Map)
-				LDR R1,= 0x40000000
+				;;set a base address of TIM2 module(from Memory Map)
+				;LDR R1,= 0x40000000
 				
-				;reset timer counter 
-				LDR R2,= 0x00000000
-				STR R2,[R1,#0x24]
+				;;reset timer counter 
+				;LDR R2,= 0x00000000
+				;STR R2,[R1,#0x24]
 				
-				;set auto reload register
-				LDR R2,=0x3000
-				STR R2, [R1,#0x2C]
+				;;set auto reload register
+				;LDR R2,=0x3000
+				;STR R2, [R1,#0x2C]
 				
-				;set prescaler 
+				;;set prescaler 
 				
-				LDR R2,=0x300
-				STR R2,[R1,#0x28]
+				;LDR R2,=0x300
+				;STR R2,[R1,#0x28]
 				
-				;eneable timer
+				;;eneable timer
 				
-				LDR R2,[R1,#0x00]
-				LDR R0,= 0x00000001
-				ORRS R2,R0
-				STR R2,[R1,#0x00]
+				;LDR R2,[R1,#0x00]
+				;LDR R0,= 0x00000001
+				;ORRS R2,R0
+				;STR R2,[R1,#0x00]
 				
-				;;enable update interrupt
-				LDR R2, [R1,#0x0C]
-				LDR R0,= 0x00000001
-				ORRS  R2, R0
-				STR R2, [R1,#0x0C]
+				;;;enable update interrupt
+				;LDR R2, [R1,#0x0C]
+				;LDR R0,= 0x00000001
+				;ORRS  R2, R0
+				;STR R2, [R1,#0x0C]
 				
-				;;ENABLE INTERRUPT HANDLING IN PROCESSOR
-				LDR R1,= 0xE000E100
-				LDR R2, [R1,#0x00]
-				LDR R0,= 0x10000000
-				ORRS R2,R0
-				STR R2, [R1,#0x00]
+				;;;ENABLE INTERRUPT HANDLING IN PROCESSOR
+				;LDR R1,= 0xE000E100
+				;LDR R2, [R1,#0x00]
+				;LDR R0,= 0x10000000
+				;ORRS R2,R0
+				;STR R2, [R1,#0x00]
 				
 				
 				
 
-;____________ WORK WITH LED __________________ 
-ledblink_setup
-				;enable clocking for Port D (RCC_AHB1ENR)
-				 LDR R1,= 0x40023800 	;set a base address of RCC module (from Memory Map)
-				 LDR R2,[R1,#0x30]		;read register [0x40023830] in R2
-				 LDR R0,= 0x00000008	;value for modifying (see BitByte.exe - set bit 3)
-				 ;?????? ???? - ??? ????????? ???????????? ????? D
-				 ORRS R2,R0				;modify R2 ???????? ??????????? ???
-				 STR R2, [R1,#0x30]		;store R2 in register [0x40023830]			 
+;;____________ WORK WITH LED __________________ 
+;ledblink_setup
+				;;enable clocking for Port D (RCC_AHB1ENR)
+				 ;LDR R1,= 0x40023800 	;set a base address of RCC module (from Memory Map)
+				 ;LDR R2,[R1,#0x30]		;read register [0x40023830] in R2
+				 ;LDR R0,= 0x00000008	;value for modifying (see BitByte.exe - set bit 3)
+				 ;;?????? ???? - ??? ????????? ???????????? ????? D
+				 ;ORRS R2,R0				;modify R2 ???????? ??????????? ???
+				 ;STR R2, [R1,#0x30]		;store R2 in register [0x40023830]			 
 				
-				;setup direction for PD12 (GPIOx_MODER)
-				 LDR R1,= 0x40020C00 	;set a base address of GPIOD module (from Memory Map)
-				 LDR R2, [R1,#0x00]		;read register [0x40020C00] in R2
-				 LDR R0,= 0x05000000	;value for modifying
-										;(set 01 for MODER12 (bits 24-25) and for MODER13 (bits 26-27)) 
-				 ORRS R2,R0				;modify R2
-				 STR R2, [R1,#0x00]		;store R2 in register [0x40020C00]
+				;;setup direction for PD12 (GPIOx_MODER)
+				 ;LDR R1,= 0x40020C00 	;set a base address of GPIOD module (from Memory Map)
+				 ;LDR R2, [R1,#0x00]		;read register [0x40020C00] in R2
+				 ;LDR R0,= 0x05000000	;value for modifying
+										;;(set 01 for MODER12 (bits 24-25) and for MODER13 (bits 26-27)) 
+				 ;ORRS R2,R0				;modify R2
+				 ;STR R2, [R1,#0x00]		;store R2 in register [0x40020C00]
 
-				;check configuration for PD12 (GPIOx_ODR)
-				 ;LDR R1,= 0x40020C00 	;base address was set in previous step
+				;;check configuration for PD12 (GPIOx_ODR)
+				 ;;LDR R1,= 0x40020C00 	;base address was set in previous step
 				 
-				 LDR R2,[R1,#0x14]		;read register [0x40020C14] in R2
-				 LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
-				 ORRS R2,R0				;modify R2
-				 STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
-				 BX LR
-		   ENDP
+				 ;LDR R2,[R1,#0x14]		;read register [0x40020C14] in R2
+				 ;LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
+				 ;ORRS R2,R0				;modify R2
+				 ;STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
+				 ;BX LR
+		   ;ENDP
 
                 ALIGN
 
