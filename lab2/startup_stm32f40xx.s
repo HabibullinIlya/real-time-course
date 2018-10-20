@@ -197,7 +197,7 @@ TIM2_IRQHandler    PROC
 ; Reset handler
 Reset_Handler    PROC
                  EXPORT  Reset_Handler             [WEAK]
-                 BL SystemInnit
+                 BL SystemInit
 				 BL main
 	 
 
@@ -420,6 +420,36 @@ FPU_IRQHandler
                 ENDP
 					
 main PROC
+		
+				 
+blink_loopstart
+				;toggle diod	
+				;LDR R1,= 0x40020C00 	;base address was set in previous step
+				 CPSID I
+                  LDR R2,[R1,#0x14]		;read register [0x40020C14] in R2
+				 LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
+				 EORS R2,R0				;modify R2
+
+				 LDR R3,= 600000
+wait
+				 SUBS R3, #1
+				 CMP R3,#0
+				 BNE wait
+                 STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
+                 CPSIE I
+
+blink_waitsetup
+				 LDR R3,= 2000000
+blink_waiting
+				 SUBS R3,#1
+				 CMP R3,#0
+				 BNE blink_waiting
+				 
+blink_loopend
+				 B blink_loopstart
+
+	 ENDP
+SystemInit PROC
 	
 ;;____________ WORK WITH TIM2 __________________
 ;timer_setup
@@ -494,37 +524,6 @@ ledblink_setup
 				 LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
 				 ORRS R2,R0				;modify R2
 				 STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
-	 ENDP
-SystemInit PROC
-	
-	
-				 
-blink_loopstart
-				;toggle diod	
-				;LDR R1,= 0x40020C00 	;base address was set in previous step
-				 CPSID I
-                  LDR R2,[R1,#0x14]		;read register [0x40020C14] in R2
-				 LDR R0,= 0x00001000	;value for modifying (set 1 for ODR12 (bit 12)) 
-				 EORS R2,R0				;modify R2
-
-				 LDR R3,= 600000
-wait
-				 SUBS R3, #1
-				 CMP R3,#0
-				 BNE wait
-                 STR R2, [R1,#0x14]		;store R2 in register [0x40020C14]	
-                 CPSIE I
-
-blink_waitsetup
-				 LDR R3,= 2000000
-blink_waiting
-				 SUBS R3,#1
-				 CMP R3,#0
-				 BNE blink_waiting
-				 
-blink_loopend
-				 B blink_loopstart
-				 
 				 BX LR
 		   ENDP
 
