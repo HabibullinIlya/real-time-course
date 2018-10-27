@@ -4,13 +4,19 @@ void wait(unsigned int mx){
 	int i;
 	for(i = 0;i<mx;i++){}
 }
-#define delay 1000000
+#define delay 100000
 
 void SystemInit(){
 	//RCC
-	RCC->AHB1ENR|=0x00000008;
+	RCC->AHB1ENR |= 0x00000008;
+	
 	RCC->APB1ENR |= 0x00000001;
-	GPIOD->MODER|=0x01000000;
+	GPIOD->MODER |= 0x01000000;
+	
+	
+	//button init
+	RCC->AHB1ENR |=0x00000001;
+	GPIOA->MODER |=0x00000000;
 	
 	
 	TIM2->CNT = 0;
@@ -21,13 +27,39 @@ void SystemInit(){
 	
 	NVIC->ISER[0] |= 0x10000000;
 	
-	
 }
 int main(){
+	
+	int button = 0;
+	int counter = 0;
+	int delay_old = delay;
+	int delay_new = delay+counter;
 	while(1){
-		GPIOD-> ODR|=0x00001000;
-		wait(delay);
-		GPIOD->ODR&=~0x00001000;
-		wait(delay);
+		
+	  button = ((GPIOA->IDR & 0x00000001)==0)?(0):(1);
+
+		if(button==1){
+			counter+=100000;
+			GPIOD->ODR|=0x00001000;
+		
+			wait(delay_old);
+			__disable_irq();
+			GPIOD->ODR&=~0x00001000;
+			__enable_irq();
+			wait(delay_old);
+			delay_new = delay_old+counter;
+			
+		}else{
+			
+			GPIOD->ODR|=0x00001000;
+		
+			wait(delay_new);
+			__disable_irq();
+			GPIOD->ODR&=~0x00001000;
+			__enable_irq();
+			wait(delay_new);
+			delay_old = delay_new;
+		}
+	 
 	}
 }
