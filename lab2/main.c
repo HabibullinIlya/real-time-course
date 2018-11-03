@@ -27,6 +27,14 @@ void SystemInit(){
 	
 	NVIC->ISER[0] |= 0x10000000;
 	
+	//UART
+	RCC->APB1ENR |= 0x00020000;
+	GPIOA->MODER |= 0x000000a0;
+	
+	GPIOA->AFR[0] |= 0x00007700;
+	
+	
+	
 }
 int main(){
 	
