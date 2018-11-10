@@ -15,8 +15,8 @@ void SystemInit(){
 	
 	
 	//button init
-	RCC->AHB1ENR |=0x00000001;
-	GPIOA->MODER |=0x00000000;
+//	RCC->AHB1ENR |=0x00000001;
+//	GPIOA->MODER |=0x00000000;
 	
 	
 	TIM2->CNT = 0;
@@ -31,43 +31,71 @@ void SystemInit(){
 	RCC->APB1ENR |= 0x00020000;
 	GPIOA->MODER |= 0x000000a0;
 	
-	GPIOA->AFR[0] |= 0x00007700;
+
+	GPIOA->AFR[0] |= 0x00000770;
+	USART2->BRR |= 0x1150;
+	
+	USART2->CR1 |= 0x0000200c;
+	
 	
 	
 	
 }
 int main(){
 	
-	int button = 0;
-	int counter = 0;
-	int delay_old = delay;
-	int delay_new = delay+counter;
+//	int button = 0;
+//	int counter = 0;
+//	int delay_old = delay;
+//	int delay_new = delay+counter;
+//	while(1){
+//		
+//	  button = ((GPIOA->IDR & 0x00000001)==0)?(0):(1);
+
+//		if(button==1){
+//			counter+=100000;
+//			GPIOD->ODR|=0x00001000;
+//		
+//			wait(delay_old);
+//			__disable_irq();
+//			GPIOD->ODR&=~0x00001000;
+//			__enable_irq();
+//			wait(delay_old);
+//			delay_new = delay_old+counter;
+//			
+//		}else{
+//			
+//			GPIOD->ODR|=0x00001000;
+//		
+//			wait(delay_new);
+//			__disable_irq();
+//			GPIOD->ODR&=~0x00001000;
+//			__enable_irq();
+//			wait(delay_new);
+//			delay_old = delay_new;
+//		}
+	 
+	//}
+	
+	int data = 0;
 	while(1){
 		
-	  button = ((GPIOA->IDR & 0x00000001)==0)?(0):(1);
-
-		if(button==1){
-			counter+=100000;
+		int bit = ((USART2->SR & 0x00000020) == 0)? (0):(1);
+		wait(delay);
+		if(bit == 1){
 			GPIOD->ODR|=0x00001000;
-		
-			wait(delay_old);
-			__disable_irq();
-			GPIOD->ODR&=~0x00001000;
-			__enable_irq();
-			wait(delay_old);
-			delay_new = delay_old+counter;
-			
-		}else{
-			
-			GPIOD->ODR|=0x00001000;
-		
-			wait(delay_new);
-			__disable_irq();
-			GPIOD->ODR&=~0x00001000;
-			__enable_irq();
-			wait(delay_new);
-			delay_old = delay_new;
+			wait(delay);
+			data = USART2->DR;
+			USART2->DR = data;
 		}
-	 
+		GPIOD->ODR&=~0x00001000;
+		
+		wait(delay);
+	
 	}
+	
+	
+	
+	
+	
+	
 }
