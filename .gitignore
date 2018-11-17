@@ -1,0 +1,10 @@
+ExtDll.iex
+lab2.axf
+lab2.build_log
+lab2.*
+main.crf
+main.d
+main.o
+sturtup_stm32f40xx.d
+sturtup_stm32f40xx.o
+sturtup_stm32f40xx
