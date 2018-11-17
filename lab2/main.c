@@ -8,7 +8,7 @@ void wait(unsigned int mx){
 
 void SystemInit(){
 	//RCC
-	RCC->AHB1ENR |= 0x00000008;
+	RCC->AHB1ENR |= 0x00000009;
 	
 	RCC->APB1ENR |= 0x00000001;
 	GPIOD->MODER |= 0x01000000;
@@ -32,8 +32,8 @@ void SystemInit(){
 	GPIOA->MODER |= 0x000000a0;
 	
 
-	GPIOA->AFR[0] |= 0x00000770;
-	USART2->BRR |= 0x1150;
+	GPIOA->AFR[0] |= 0x00007700;
+	USART2->BRR |= 0x100;
 	
 	USART2->CR1 |= 0x0000200c;
 	
@@ -76,26 +76,22 @@ int main(){
 	 
 	//}
 	
-	int data = 0;
+	volatile int data = 0;
 	while(1){
 		
-		int bit = ((USART2->SR & 0x00000020) == 0)? (0):(1);
+		volatile int bit = ((USART2->SR & 0x00000020) == 0)? (0):(1);
 		wait(delay);
-		if(bit == 1){
+		//if(bit == 1){
 			GPIOD->ODR|=0x00001000;
 			wait(delay);
 			data = USART2->DR;
+		data=0xf0;
 			USART2->DR = data;
-		}
+		//}
 		GPIOD->ODR&=~0x00001000;
 		
 		wait(delay);
 	
 	}
-	
-	
-	
-	
-	
-	
+		
 }
