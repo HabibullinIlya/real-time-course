@@ -93,7 +93,8 @@ int main(){
 		
 		USART2->DR = counter;
 		counter++;
-		//GPIOD->ODR&=~0x00001000;
+		//GPIOD->ODR&=~0x00001000;\
+		//test
 		
 		wait(delay);
 	
