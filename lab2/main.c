@@ -33,7 +33,7 @@ void SystemInit(){
 	
 
 	GPIOA->AFR[0] |= 0x00007700;
-	USART2->BRR |= 0x100;
+	USART2->BRR |= 0x116;
 	
 	USART2->CR1 |= 0x0000200c;
 	
@@ -77,18 +77,23 @@ int main(){
 	//}
 	
 	volatile int data = 0;
+	int counter = 0;
+	
 	while(1){
 		
 		volatile int bit = ((USART2->SR & 0x00000020) == 0)? (0):(1);
 		wait(delay);
-		//if(bit == 1){
-			GPIOD->ODR|=0x00001000;
-			wait(delay);
-			data = USART2->DR;
-		data=0xf0;
-			USART2->DR = data;
-		//}
-		GPIOD->ODR&=~0x00001000;
+//		if(bit == 1){
+//			GPIOD->ODR|=0x00001000;
+//			wait(delay);
+//			data = USART2->DR;
+//			//data=0xf0;
+//			USART2->DR = data;
+//		}
+		
+		USART2->DR = counter;
+		counter++;
+		//GPIOD->ODR&=~0x00001000;
 		
 		wait(delay);
 	
