@@ -43,36 +43,36 @@ void SystemInit(){
 }
 int main(){
 	
-//	int button = 0;
-//	int counter = 0;
-//	int delay_old = delay;
-//	int delay_new = delay+counter;
-//	while(1){
-//		
-//	  button = ((GPIOA->IDR & 0x00000001)==0)?(0):(1);
+	int button = 0;
+	int counter = 0;
+	int delay_old = delay;
+	int delay_new = delay+counter;
+	while(1){
+		
+	  button = ((GPIOA->IDR & 0x00000001)==0)?(0):(1);
 
-//		if(button==1){
-//			counter+=100000;
-//			GPIOD->ODR|=0x00001000;
-//		
-//			wait(delay_old);
-//			__disable_irq();
-//			GPIOD->ODR&=~0x00001000;
-//			__enable_irq();
-//			wait(delay_old);
-//			delay_new = delay_old+counter;
-//			
-//		}else{
-//			
-//			GPIOD->ODR|=0x00001000;
-//		
-//			wait(delay_new);
-//			__disable_irq();
-//			GPIOD->ODR&=~0x00001000;
-//			__enable_irq();
-//			wait(delay_new);
-//			delay_old = delay_new;
-//		}
+		if(button==1){
+			counter+=100000;
+			GPIOD->ODR|=0x00001000;
+		
+			wait(delay_old);
+			__disable_irq();
+			GPIOD->ODR&=~0x00001000;
+			__enable_irq();
+			wait(delay_old);
+			delay_new = delay_old+counter;
+			
+		}else{
+			
+			GPIOD->ODR|=0x00001000;
+		
+			wait(delay_new);
+			__disable_irq();
+			GPIOD->ODR&=~0x00001000;
+			__enable_irq();
+			wait(delay_new);
+			delay_old = delay_new;
+		}
 	 
 	//}
 	
@@ -83,16 +83,15 @@ int main(){
 		
 		volatile int bit = ((USART2->SR & 0x00000020) == 0)? (0):(1);
 		wait(delay);
-//		if(bit == 1){
-//			GPIOD->ODR|=0x00001000;
-//			wait(delay);
-//			data = USART2->DR;
-//			//data=0xf0;
-//			USART2->DR = data;
-//		}
+		if(bit == 1){
+			GPIOD->ODR|=0x00001000;
+			wait(delay);
+			data = USART2->DR;
+			//data=0xf0;
+			USART2->DR = data;
+		}
 		
-		USART2->DR = counter;
-		counter++;
+	
 		//GPIOD->ODR&=~0x00001000;\
 		//test
 		
@@ -101,3 +100,71 @@ int main(){
 	}
 		
 }
+}
+
+
+void Input(){
+	
+	
+	while(1){
+		
+	}
+}
+
+
+void Output(){
+	
+	while(1){
+			
+	
+	}
+}	
+
+void GreatWork(){
+	while(1){
+	
+	}
+}
+void *constTask[] __attribute__((at(0x08001000)))={	
+	Input,
+	Output,
+	GreatWork,
+	0
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -207,7 +207,19 @@ Reset_Handler    PROC
 	 
 
                  ENDP
-
+					 
+SaveContext		proc
+				export SaveContext
+				
+				BX LR
+				ENDP
+					
+RestoreContext	proc
+				export RestoreContext
+					
+					
+				BX LR
+				endp
 ; Dummy Exception Handlers (infinite loops which can be modified)
 
 NMI_Handler     PROC
